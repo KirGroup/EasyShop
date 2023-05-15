@@ -1,5 +1,6 @@
 package com.example.easyshop.adapter
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -17,6 +18,9 @@ class ProductAdapter: ListAdapter<Product, ProductViewHolder>(DiffCallBack()) {
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         holder.binding.apply {
             name.text =getItem(position).name
+            if(getItem(position).checked){
+                name.paintFlags = name.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            }
         }
     }
 }
