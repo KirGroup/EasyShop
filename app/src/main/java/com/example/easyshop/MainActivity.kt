@@ -1,15 +1,32 @@
 package com.example.easyshop
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import com.example.easyshop.adapter.ProductAdapter
 import com.example.easyshop.databinding.ActivityMainBinding
+import com.example.easyshop.domain.Product
+import com.example.easyshop.domain.Stub
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var productAdapter: ProductAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setAdapter()
+    }
+
+    private fun setAdapter() {
+        productAdapter = ProductAdapter()
+        recyclerView = binding.listProduct
+        recyclerView.adapter = productAdapter
+        productAdapter.submitList(Stub.stubList)
+
     }
 }

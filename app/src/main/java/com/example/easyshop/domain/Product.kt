@@ -1,6 +1,7 @@
 package com.example.easyshop.domain
 
-class Product(
+data class Product(
+    var id: Long,
     var name: String,
     var checked: Boolean
 )
