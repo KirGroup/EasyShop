@@ -1,6 +1,7 @@
 package com.example.easyshop
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.easyshop.adapter.ProductAdapter
@@ -18,15 +19,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setAdapter()
+
+
     }
 
     private fun setAdapter() {
-        productAdapter = ProductAdapter()
+        productAdapter = ProductAdapter {
+            val product = Product(it.id, it.name, !it.checked)
+            Stub.stubList[it.id.toInt()] = product
+            val newList = ArrayList<Product>(Stub.stubList)
+            productAdapter.submitList(newList)
+        }
         recyclerView = binding.listProduct
         recyclerView.adapter = productAdapter
         productAdapter.submitList(Stub.stubList)
-
     }
 }

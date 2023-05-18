@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.example.easyshop.databinding.ItemProductBinding
 import com.example.easyshop.domain.Product
 
-class ProductAdapter: ListAdapter<Product, ProductViewHolder>(DiffCallBack()) {
+class ProductAdapter(private val onItemTouchCallBack: ((Product) -> Unit)): ListAdapter<Product, ProductViewHolder>(DiffCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         return ProductViewHolder(
@@ -17,9 +17,14 @@ class ProductAdapter: ListAdapter<Product, ProductViewHolder>(DiffCallBack()) {
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         holder.binding.apply {
-            name.text =getItem(position).name
+            name.text = getItem(position).name
             if(getItem(position).checked){
                 name.paintFlags = name.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            } else name.paintFlags = name.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+
+            name.setOnClickListener {
+                onItemTouchCallBack.invoke(getItem(position))
+
             }
         }
     }
