@@ -41,27 +41,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createDialog(context: Context, product: Product) {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Edit")
-        builder.setMessage("Enter new value:")
-        val input = EditText(context)
-        input.setText(product.name)
-        builder.setView(input)
-        builder.setPositiveButton("Ok") { dialog, which ->
-            val newValue = input.text.toString()
-            val product1 = Product(product.id, newValue, product.checked)
+        EditDialog(context, product, {
             val newList = ArrayList<Product>(Stub.stubList)
-            newList[product1.id.toInt()] = product1
+            newList[it.id.toInt()] = it
             productAdapter.submitList(newList)
-        }
-
-        builder.setNegativeButton("Cancel") { dialog, which ->
-            // Обработка нажатия кнопки "Cancel"
-            dialog.cancel()
-        }
-
-        // Создание и отображение диалога
-        val dialog = builder.create()
-        dialog.show()
+        }, {
+            val newList = ArrayList<Product>(Stub.stubList)
+            newList.removeAt(it.id.toInt())
+            productAdapter.submitList(newList)
+            Stub.stubList.removeAt(it.id.toInt())
+        }).show()
     }
 }
