@@ -28,8 +28,8 @@ class MainActivity : AppCompatActivity() {
     private fun setAdapter() {
         productAdapter = ProductAdapter({
             val product = Product(it.id, it.name, !it.checked)
-            Stub.stubList[it.id.toInt()] = product
             val newList = ArrayList<Product>(Stub.stubList)
+            newList[it.id.toInt()] = product
             productAdapter.submitList(newList)
         }, {
             createDialog(this, it)
@@ -50,8 +50,8 @@ class MainActivity : AppCompatActivity() {
         builder.setPositiveButton("Ok") { dialog, which ->
             val newValue = input.text.toString()
             val product1 = Product(product.id, newValue, product.checked)
-            Stub.stubList[product1.id.toInt()] = product1
             val newList = ArrayList<Product>(Stub.stubList)
+            newList[product1.id.toInt()] = product1
             productAdapter.submitList(newList)
         }
 

@@ -10,8 +10,7 @@ import com.example.easyshop.domain.Product
 class ProductAdapter(
     private val onItemTouchCallBack: ((Product) -> Unit),
     private val onLongItemTouchCallBack: (Product) -> Unit
-) :
-    ListAdapter<Product, ProductViewHolder>(DiffCallBack()) {
+) : ListAdapter<Product, ProductViewHolder>(DiffCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         return ProductViewHolder(
@@ -30,7 +29,7 @@ class ProductAdapter(
                 onItemTouchCallBack.invoke(getItem(position))
             }
 
-            name.setOnLongClickListener{
+            name.setOnLongClickListener {
                 onLongItemTouchCallBack.invoke(getItem(position))
                 true
             }
