@@ -28,27 +28,29 @@ class MainActivity : AppCompatActivity() {
     private fun setAdapter() {
         productAdapter = ProductAdapter({
             val product = Product(it.id, it.name, !it.checked)
-            val newList = ArrayList<Product>(Stub.stubList)
-            newList[it.id.toInt()] = product
-            productAdapter.submitList(newList)
+            val touchList = ArrayList<Product>(Stub.stubList)
+            touchList[it.id.toInt()] = product
+            productAdapter.submitList(touchList)
         }, {
             createDialog(this, it)
         }
         )
         recyclerView = binding.listProduct
         recyclerView.adapter = productAdapter
-        productAdapter.submitList(Stub.stubList)
+        val initList = ArrayList<Product>(Stub.stubList)
+        productAdapter.submitList(initList)
     }
 
     private fun createDialog(context: Context, product: Product) {
         EditDialog(context, product, {
-            val newList = ArrayList<Product>(Stub.stubList)
-            newList[it.id.toInt()] = it
-            productAdapter.submitList(newList)
+            val editList = ArrayList<Product>(Stub.stubList)
+            editList[it.id.toInt()] = it
+            productAdapter.submitList(editList)
         }, {
-            val newList = ArrayList<Product>(Stub.stubList)
-            newList.removeAt(it.id.toInt())
-            productAdapter.submitList(newList)
+            val deleteList = ArrayList<Product>(Stub.stubList)
+            deleteList.removeAt(it.id.toInt())
+            productAdapter.submitList(deleteList)
+            Log.d("areItemsTheSame", "createDialog delete from list")
             Stub.stubList.removeAt(it.id.toInt())
         }).show()
     }
