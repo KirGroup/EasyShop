@@ -1,5 +1,6 @@
 package com.example.easyshop
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.widget.EditText
@@ -19,6 +20,8 @@ class EditDialog(
         val input = EditText(context)
         input.setText(product.name)
         setView(input)
+
+
         setButton(BUTTON_POSITIVE, "Ok") { dialog, which ->
             val newValue = input.text.toString()
             val product1 = Product(product.id, newValue, product.checked)
@@ -34,5 +37,7 @@ class EditDialog(
         }
 
         super.onCreate(savedInstanceState)
+
+        getButton(BUTTON_NEUTRAL).setTextColor(context.getColor(R.color.red))
     }
 }
