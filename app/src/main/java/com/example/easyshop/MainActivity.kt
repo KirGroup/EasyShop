@@ -2,9 +2,6 @@ package com.example.easyshop
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.easyshop.adapter.ProductAdapter
@@ -22,6 +19,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.addButton.setOnClickListener {
+            createAddDialog(this)
+        }
         setAdapter()
     }
 
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
             touchList[it.id.toInt()] = product
             productAdapter.submitList(touchList)
         }, {
-            createDialog(this, it)
+            createEditDialog(this, it)
         }
         )
         recyclerView = binding.listProduct
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         productAdapter.submitList(initList)
     }
 
-    private fun createDialog(context: Context, product: Product) {
+    private fun createEditDialog(context: Context, product: Product) {
         EditDialog(context, product, {
             val editList = ArrayList<Product>(Stub.stubList)
             editList[it.id.toInt()] = it
@@ -50,8 +50,17 @@ class MainActivity : AppCompatActivity() {
             val deleteList = ArrayList<Product>(Stub.stubList)
             deleteList.removeAt(it.id.toInt())
             productAdapter.submitList(deleteList)
-            Log.d("areItemsTheSame", "createDialog delete from list")
             Stub.stubList.removeAt(it.id.toInt())
+        }).show()
+    }
+
+    private fun createAddDialog(context: Context) {
+        AddDialog(context, {
+            val addList = ArrayList<Product>(Stub.stubList)
+            val addItem = Product(((Stub.stubList.last()).id)+1, it, false)
+            addList.add(addItem)
+            productAdapter.submitList(addList)
+            Stub.stubList.add(addItem)
         }).show()
     }
 }
