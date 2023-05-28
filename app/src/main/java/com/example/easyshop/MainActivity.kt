@@ -2,6 +2,7 @@ package com.example.easyshop
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.easyshop.adapter.ProductAdapter
@@ -29,8 +30,9 @@ class MainActivity : AppCompatActivity() {
         productAdapter = ProductAdapter({
             val product = Product(it.id, it.name, !it.checked)
             val touchList = ArrayList<Product>(Stub.stubList)
-            touchList[it.id.toInt()] = product
+            touchList[touchList.indexOf(it)] = product
             productAdapter.submitList(touchList)
+            Stub.stubList[Stub.stubList.indexOf(it)] = product
         }, {
             createEditDialog(this, it)
         }
@@ -43,24 +45,25 @@ class MainActivity : AppCompatActivity() {
 
     private fun createEditDialog(context: Context, product: Product) {
         EditDialog(context, product, {
+            Stub.stubList[Stub.stubList.indexOf(product)] = it
             val editList = ArrayList<Product>(Stub.stubList)
-            editList[it.id.toInt()] = it
+            editList[editList.indexOf(it)] = it
             productAdapter.submitList(editList)
         }, {
             val deleteList = ArrayList<Product>(Stub.stubList)
-            deleteList.removeAt(it.id.toInt())
+            deleteList.remove(it)
             productAdapter.submitList(deleteList)
-            Stub.stubList.removeAt(it.id.toInt())
+            Stub.stubList.remove(it)
         }).show()
     }
 
     private fun createAddDialog(context: Context) {
-        AddDialog(context, {
+        AddDialog(context) {
             val addList = ArrayList<Product>(Stub.stubList)
-            val addItem = Product(((Stub.stubList.last()).id)+1, it, false)
+            val addItem = Product(((Stub.stubList.last()).id) + 1, it, false)
             addList.add(addItem)
             productAdapter.submitList(addList)
             Stub.stubList.add(addItem)
-        }).show()
+        }.show()
     }
 }
