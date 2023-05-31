@@ -1,6 +1,7 @@
 package com.example.easyshop.adapter
 
 import android.graphics.Paint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -10,7 +11,7 @@ import com.example.easyshop.domain.Product
 class ProductAdapter(
     private val onItemTouchCallBack: ((Product) -> Unit),
     private val onLongItemTouchCallBack: (Product) -> Unit
-) : ListAdapter<Product, ProductViewHolder>(DiffCallBack()) {
+) : ListAdapter<Product, ProductViewHolder>(DiffCallBackLog()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         return ProductViewHolder(
@@ -26,11 +27,11 @@ class ProductAdapter(
             } else name.paintFlags = name.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
 
             name.setOnClickListener {
-                onItemTouchCallBack.invoke(getItem(position))
+                onItemTouchCallBack.invoke(getItem(holder.adapterPosition))
             }
 
             name.setOnLongClickListener {
-                onLongItemTouchCallBack.invoke(getItem(position))
+                onLongItemTouchCallBack.invoke(getItem(holder.adapterPosition))
                 true
             }
         }

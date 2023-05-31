@@ -9,16 +9,20 @@ import com.example.easyshop.adapter.ProductAdapter
 import com.example.easyshop.databinding.ActivityMainBinding
 import com.example.easyshop.domain.Product
 import com.example.easyshop.domain.Stub
+import com.example.easyshop.room.MyAppDatabase
+import com.example.easyshop.room.ProductDao
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var productAdapter: ProductAdapter
+    private lateinit var database: ProductDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        database = ProductDomain.init(this).productDao()
         setContentView(binding.root)
         binding.addButton.setOnClickListener {
             createAddDialog(this)
@@ -27,43 +31,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setAdapter() {
-        productAdapter = ProductAdapter({
-            val product = Product(it.id, it.name, !it.checked)
-            val touchList = ArrayList<Product>(Stub.stubList)
-            touchList[touchList.indexOf(it)] = product
+        productAdapter = ProductAdapter({ listProduct ->
+//            val product = Product(listProduct.id, listProduct.name, !listProduct.checked)
+            val touchList = ArrayList<Product>(database.getAllProduct())
+            val product = touchList.find { it == listProduct }
+            Log.d("setAdapter1", "$product")
+            Log.d("setAdapter1", "dataBaseList: ${database.getAllProduct().hashCode()} adapterList: ${productAdapter.currentList.hashCode()}")
+            touchList[touchList.indexOf(product)] = listProduct.apply { checked = !checked }
             productAdapter.submitList(touchList)
-            Stub.stubList[Stub.stubList.indexOf(it)] = product
+            database.updateProduct(listProduct)
         }, {
             createEditDialog(this, it)
         }
         )
         recyclerView = binding.listProduct
         recyclerView.adapter = productAdapter
-        val initList = ArrayList<Product>(Stub.stubList)
+        val initList = ArrayList<Product>(database.getAllProduct())
         productAdapter.submitList(initList)
     }
 
     private fun createEditDialog(context: Context, product: Product) {
+        Log.d("createEditDialog", "$product")
         EditDialog(context, product, {
-            Stub.stubList[Stub.stubList.indexOf(product)] = it
-            val editList = ArrayList<Product>(Stub.stubList)
+            database.updateProduct(it)
+            val editList = ArrayList<Product>(database.getAllProduct())
             editList[editList.indexOf(it)] = it
             productAdapter.submitList(editList)
         }, {
-            val deleteList = ArrayList<Product>(Stub.stubList)
+            val deleteList = ArrayList<Product>(database.getAllProduct())
             deleteList.remove(it)
             productAdapter.submitList(deleteList)
-            Stub.stubList.remove(it)
+            database.deleteProduct(it)
         }).show()
     }
 
     private fun createAddDialog(context: Context) {
         AddDialog(context) {
-            val addList = ArrayList<Product>(Stub.stubList)
-            val addItem = Product(((Stub.stubList.last()).id) + 1, it, false)
+            val addList = ArrayList<Product>(database.getAllProduct())
+            val addItem = Product(0, it, false)
             addList.add(addItem)
             productAdapter.submitList(addList)
-            Stub.stubList.add(addItem)
+            database.insertProduct(addItem)
         }.show()
     }
 }
