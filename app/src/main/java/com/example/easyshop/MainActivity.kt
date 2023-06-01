@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.easyshop.adapter.ProductAdapter
+import com.example.easyshop.adapter.ProductRecycleAdapter
 import com.example.easyshop.databinding.ActivityMainBinding
 import com.example.easyshop.domain.Product
 import com.example.easyshop.domain.Stub
@@ -16,7 +17,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var recyclerView: RecyclerView
-    private lateinit var productAdapter: ProductAdapter
+//    private lateinit var productAdapter: ProductAdapter
+    private lateinit var productRecycleAdapter: ProductRecycleAdapter
     private lateinit var database: ProductDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,40 +29,56 @@ class MainActivity : AppCompatActivity() {
         binding.addButton.setOnClickListener {
             createAddDialog(this)
         }
-        setAdapter()
+//        setAdapter()
+        setRecycleAdapter()
     }
 
-    private fun setAdapter() {
-        productAdapter = ProductAdapter({ listProduct ->
-//            val product = Product(listProduct.id, listProduct.name, !listProduct.checked)
+//    private fun setAdapter() {
+//        productAdapter = ProductAdapter({ listProduct ->
+//            val touchList = ArrayList<Product>(database.getAllProduct())
+//            val product = touchList.find { it == listProduct }
+//            Log.d("setAdapter1", "$product")
+//            Log.d("setAdapter1", "dataBaseList: ${database.getAllProduct().hashCode()} adapterList: ${productAdapter.currentList.hashCode()}")
+//            touchList[touchList.indexOf(product)] = listProduct.apply { checked = !checked }
+//            productAdapter.submitList(touchList)
+//            database.updateProduct(listProduct)
+//        }, {
+//            createEditDialog(this, it)
+//        }
+//        )
+//        recyclerView = binding.listProduct
+//        recyclerView.adapter = productAdapter
+//        val initList = ArrayList<Product>(database.getAllProduct())
+//        productAdapter.submitList(initList)
+//    }
+
+    private fun setRecycleAdapter() {
+        productRecycleAdapter = ProductRecycleAdapter({ listProduct ->
             val touchList = ArrayList<Product>(database.getAllProduct())
             val product = touchList.find { it == listProduct }
-            Log.d("setAdapter1", "$product")
-            Log.d("setAdapter1", "dataBaseList: ${database.getAllProduct().hashCode()} adapterList: ${productAdapter.currentList.hashCode()}")
             touchList[touchList.indexOf(product)] = listProduct.apply { checked = !checked }
-            productAdapter.submitList(touchList)
+            productRecycleAdapter.setList(touchList)
             database.updateProduct(listProduct)
         }, {
             createEditDialog(this, it)
         }
         )
         recyclerView = binding.listProduct
-        recyclerView.adapter = productAdapter
+        recyclerView.adapter = productRecycleAdapter
         val initList = ArrayList<Product>(database.getAllProduct())
-        productAdapter.submitList(initList)
+        productRecycleAdapter.setList(initList)
     }
 
     private fun createEditDialog(context: Context, product: Product) {
-        Log.d("createEditDialog", "$product")
         EditDialog(context, product, {
             database.updateProduct(it)
             val editList = ArrayList<Product>(database.getAllProduct())
             editList[editList.indexOf(it)] = it
-            productAdapter.submitList(editList)
+            productRecycleAdapter.setList(editList)
         }, {
             val deleteList = ArrayList<Product>(database.getAllProduct())
             deleteList.remove(it)
-            productAdapter.submitList(deleteList)
+            productRecycleAdapter.setList(deleteList)
             database.deleteProduct(it)
         }).show()
     }
@@ -70,7 +88,7 @@ class MainActivity : AppCompatActivity() {
             val addList = ArrayList<Product>(database.getAllProduct())
             val addItem = Product(0, it, false)
             addList.add(addItem)
-            productAdapter.submitList(addList)
+            productRecycleAdapter.setList(addList)
             database.insertProduct(addItem)
         }.show()
     }
