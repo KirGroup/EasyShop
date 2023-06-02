@@ -10,7 +10,7 @@ import com.example.easyshop.domain.Product
 
 class ProductRecycleAdapter(
     private val onItemTouchCallBack: ((Product) -> Unit),
-    private val onLongItemTouchCallBack: (Product) -> Unit,
+    private val onLongItemTouchCallBack: (Product) -> Unit
 ) : RecyclerView.Adapter<ProductViewHolder>() {
 
     private lateinit var productList: List<Product>

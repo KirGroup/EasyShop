@@ -8,6 +8,9 @@ interface ProductDao {
     @Query("SELECT * FROM products")
     fun getAllProduct(): List<Product>
 
+    @Query("SELECT * FROM products WHERE name = :productName LIMIT 1")
+    fun getProductByName(productName: String): Product?
+
     @Insert
     fun insertProduct(product: Product)
 

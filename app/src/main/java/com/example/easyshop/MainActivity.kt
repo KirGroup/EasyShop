@@ -2,22 +2,20 @@ package com.example.easyshop
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.easyshop.adapter.ProductAdapter
 import com.example.easyshop.adapter.ProductRecycleAdapter
 import com.example.easyshop.databinding.ActivityMainBinding
 import com.example.easyshop.domain.Product
-import com.example.easyshop.domain.Stub
-import com.example.easyshop.room.MyAppDatabase
 import com.example.easyshop.room.ProductDao
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var recyclerView: RecyclerView
-//    private lateinit var productAdapter: ProductAdapter
+
+    //    private lateinit var productAdapter: ProductAdapter
     private lateinit var productRecycleAdapter: ProductRecycleAdapter
     private lateinit var database: ProductDao
 
@@ -85,11 +83,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun createAddDialog(context: Context) {
         AddDialog(context) {
-            val addList = ArrayList<Product>(database.getAllProduct())
-            val addItem = Product(0, it, false)
-            addList.add(addItem)
-            productRecycleAdapter.setList(addList)
-            database.insertProduct(addItem)
+            val existingProduct = database.getProductByName(it)
+            if (existingProduct == null) {
+                val addList = ArrayList<Product>(database.getAllProduct())
+                val addItem = Product(0, it, false)
+                addList.add(addItem)
+                productRecycleAdapter.setList(addList)
+                database.insertProduct(addItem)
+            } else {
+                Toast.makeText(context, "Product already exists!", Toast.LENGTH_SHORT).show()
+            }
         }.show()
     }
 }
